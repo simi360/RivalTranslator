@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RivalTranslator.Shared;
+using RivalTranslator.Server.Services;
 
 namespace RivalTranslator.Server.Controllers;
 [ApiController]
