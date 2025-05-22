@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RivalTranslator", "RivalTranslator", "{7A9EBA76-A25B-4C15-8A0E-1D0DF7652C97}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RivalTranslator.Client", "RivalTranslator.Client\RivalTranslator.Client.csproj", "{610C6FF7-C0F9-4F30-9870-B50CEFE1B3E3}"
