@@ -1,0 +1,22 @@
+# Build artifacts
+bin/
+obj/
+
+# User-specific files
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Secrets
+**/appsettings.Development.json
+**/secrets.json
+
+# Others
+*.log
+*.DS_Store
+*.nupkg
+*.snupkg
+packages/

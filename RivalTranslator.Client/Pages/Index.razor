@@ -1,0 +1,138 @@
+﻿@page "/"
+@using RivalTranslator.Shared
+@inject HttpClient Http
+@inject IJSRuntime JS
+
+<MudContainer Fluid Class="mt-4">
+    <MudPaper Class="mx-auto p-4" Style="max-width:900px" Elevation="1">
+
+        <!-- 1) Language selectors + swap -->
+        <MudGrid AlignItems="Center" Spacing="2">
+            <MudItem xs="5">
+                <select class="form-select" @bind="FromCode">
+                    @foreach (var l in Languages)
+                    {
+                        <option value="@l.Code">@l.Name</option>
+                    }
+                </select>
+            </MudItem>
+
+            <MudItem xs="2" Class="d-flex justify-center">
+                <MudIconButton Icon="@Icons.Material.Filled.SwapHoriz"
+                               Size="Size.Small"
+                               Color="Color.Primary"
+                               OnClick="SwapLanguages" />
+            </MudItem>
+
+            <MudItem xs="5">
+                <select class="form-select" @bind="ToCode">
+                    @foreach (var l in Languages)
+                    {
+                        <option value="@l.Code">@l.Name</option>
+                    }
+                </select>
+            </MudItem>
+        </MudGrid>
+
+        <!-- 2) Input and result side by side -->
+        <MudGrid Spacing="2" Class="mt-4">
+            <MudItem xs="5">
+                <MudTextField T="string"
+                              @bind-Value="Input"
+                              Immediate="true"
+                              Label="Enter text"
+                              Variant="@Variant.Outlined"
+                              Lines="16"
+                              FullWidth="true" />
+            </MudItem>
+
+            <MudItem xs="2" Class="d-flex flex-column align-center">
+                <MudIconButton Icon="@Icons.Material.Filled.ContentCopy"
+                               Size="Size.Small"
+                               Color="Color.Primary"
+                               Disabled="@string.IsNullOrWhiteSpace(Result)"
+                               OnClick="CopyResult"
+                               Class="mb-2" />
+                <MudIconButton Icon="@Icons.Material.Filled.Clear"
+                               Size="Size.Small"
+                               Color="Color.Secondary"
+                               Disabled="@string.IsNullOrWhiteSpace(Input)"
+                               OnClick="ClearAll" />
+            </MudItem>
+
+            <MudItem xs="5">
+                <MudTextField T="string"
+                              Value="@Result"
+                              Label="Translation"
+                              Variant="@Variant.Outlined"
+                              Lines="16"
+                              FullWidth="true"
+                              ReadOnly="true" />
+            </MudItem>
+        </MudGrid>
+
+        <!-- 3) Translate button -->
+        <MudButton Variant="@Variant.Filled"
+                   Color="@Color.Primary"
+                   OnClick="DoTranslate"
+                   Disabled="@string.IsNullOrWhiteSpace(Input)"
+                   Class="mt-4">
+            Translate
+        </MudButton>
+
+        @if (!string.IsNullOrEmpty(StatusMessage))
+        {
+            <MudText Color="Color.Error" Typo="Typo.caption" Class="mt-2">
+                @StatusMessage
+            </MudText>
+        }
+    </MudPaper>
+</MudContainer>
+
+@code {
+    List<LanguageInfo> Languages = new();
+    string FromCode = "en", ToCode = "fr";
+    string Input = "", Result = "", StatusMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            Languages = await Http.GetFromJsonAsync<List<LanguageInfo>>("api/translate/languages")
+                        ?? new();
+            // If codes not in list, default remains "en"/"fr"
+        }
+        catch
+        {
+            StatusMessage = "Failed to load languages.";
+        }
+    }
+
+    async Task DoTranslate()
+    {
+        StatusMessage = "";
+        try
+        {
+            var req = new TranslateRequest(Input, FromCode, ToCode);
+            var resp = await Http.PostAsJsonAsync("api/translate", req);
+            var data = await resp.Content.ReadFromJsonAsync<TranslateResponse>();
+            Result = data?.TranslatedText ?? "";
+        }
+        catch
+        {
+            StatusMessage = "Translation failed.";
+        }
+    }
+
+    void SwapLanguages()
+      => (FromCode, ToCode, Input, Result) = (ToCode, FromCode, Result, Input);
+
+    async Task CopyResult()
+    {
+        if (!string.IsNullOrWhiteSpace(Result))
+            await JS.InvokeVoidAsync("navigator.clipboard.writeText", Result);
+    }
+
+    void ClearAll()
+      => (Input, Result) = ("", "");
+}

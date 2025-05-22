@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<SpaRoot>..\RivalTranslator.Client\</SpaRoot>
+		<StaticWebAssetsDuringDevelopment>true</StaticWebAssetsDuringDevelopment>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>32432004-944d-442e-bf89-9dafddb62148</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.36" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\RivalTranslator.Shared\RivalTranslator.Shared.csproj" />
+		<ProjectReference Include="..\RivalTranslator.Client\RivalTranslator.Client.csproj" />
+	</ItemGroup>
+
+</Project>
