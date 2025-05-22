@@ -68,7 +68,7 @@ public class AzureCognitiveTranslator : ITranslator
         catch (Exception ex)
         {
             Console.WriteLine("Azure API call failed: " + ex.Message);
-            return new List<LanguageInfo>(); // fallback
+            return new List<LanguageInfo>();
         }
     }
 

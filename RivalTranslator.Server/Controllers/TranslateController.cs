@@ -11,17 +11,10 @@ public class TranslateController : ControllerBase
     public TranslateController(ITranslator translator) => _translator = translator;
 
     [HttpGet("languages")]
-    public Task<IEnumerable<LanguageInfo>> Languages()
-    {
-        return Task.FromResult<IEnumerable<LanguageInfo>>(new[]
-        {
-        new LanguageInfo("en", "English"),
-        new LanguageInfo("fr", "French"),
-        new LanguageInfo("es", "Spanish")
-    });
-    }
+    public async Task<IEnumerable<LanguageInfo>> Languages()
+        => await _translator.GetSupportedLanguagesAsync();
 
     [HttpPost]
     public async Task<TranslateResponse> Post([FromBody] TranslateRequest req)
-      => new(await _translator.TranslateAsync(req.Text, req.From, req.To));
+        => new(await _translator.TranslateAsync(req.Text, req.From, req.To));
 }
